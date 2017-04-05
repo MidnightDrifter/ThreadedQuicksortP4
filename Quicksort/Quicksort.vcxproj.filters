@@ -21,19 +21,19 @@
     </Text>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\driver.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\driver-debugging.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\quicksort-skeleton.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="quicksort.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\ratio.cpp">
+    <ClCompile Include="ratio.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="driver-debugging.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="driver.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="quicksort-skeleton.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -70,16 +70,16 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\quicksort-skeleton.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="quicksort.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\ratio.h">
+    <ClInclude Include="ratio.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\sort_small_arrays.h">
+    <ClInclude Include="sort_small_arrays.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="quicksort-skeleton.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

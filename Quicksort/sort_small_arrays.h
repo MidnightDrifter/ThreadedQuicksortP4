@@ -1,3 +1,4 @@
+#pragma once
 template< typename T>
 void move( T data[5], int i, int j ) 
 { 
