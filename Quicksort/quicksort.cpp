@@ -142,3 +142,65 @@ void quicksort_iterative_aux(Container<T> & ranges)
 		ranges.PUSH(std::make_pair(a, std::make_pair(q + 1, e)));
 	}
 }
+
+
+//Thread sorting code
+template <typename T>
+void threadQuicksort(Container<T>& container, const std::mutex& m, unsigned startRange, unsigned endRange, int myThreadID)
+{
+	triple<T> r;
+	while (true)  //Check for end of calculation / empty container goes here <-----
+	{
+		m.lock();
+		r = container.top();
+		container.pop();
+		m.unlock();
+
+		T* a = r.first;
+		unsigned b = r.second.first;
+		unsigned e = r.second.second;
+
+
+		//base case
+		if (e - b<6) {
+			switch (e - b) {
+			case 5: quicksort_base_5(a + b); break;
+			case 4: quicksort_base_4(a + b); break;
+			case 3: quicksort_base_3(a + b); break;
+			case 2: quicksort_base_2(a + b); break;
+			}
+			continue;
+
+
+			unsigned q = partition(a, b, e);
+
+
+			m.lock();
+			ranges.PUSH(std::make_pair(a, std::make_pair(b, q)));
+			ranges.PUSH(std::make_pair(a, std::make_pair(q + 1, e)));
+			m.unlock();
+		}
+	}
+}
+//END Thread sorting code
+
+template<typename T>
+void quicksort(T* a, unsigned startRange, unsigned endRange, int numThreads)
+{
+
+	Container<T> ranges;
+	ranges.push(std::make_pair(a), std::make_pair(startRange, endRange));
+	std::thread t[numThreads];
+	std::mutex emptyContainerMutex;
+		for(int i=0;i<numThreads;++i)
+		{ 
+			t[i] = std::thread(threadQuicksort, ranges, emptyContainerMutex, startRange, endRange, i);
+		}
+
+		//Run ittttt
+
+		for (int i = 0; i < numThreads; ++i)
+		{
+			t[i].join();
+		}
+}
