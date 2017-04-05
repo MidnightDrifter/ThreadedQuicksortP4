@@ -79,6 +79,7 @@
     <ClCompile Include="..\driver-debugging.cpp" />
     <ClCompile Include="..\driver.cpp" />
     <ClCompile Include="..\quicksort-skeleton.cpp" />
+    <ClCompile Include="..\ratio.cpp" />
     <ClCompile Include="quicksort.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -95,6 +96,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\quicksort-skeleton.h" />
+    <ClInclude Include="..\ratio.h" />
+    <ClInclude Include="..\sort_small_arrays.h" />
     <ClInclude Include="quicksort.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
