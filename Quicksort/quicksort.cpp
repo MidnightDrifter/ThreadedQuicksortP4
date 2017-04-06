@@ -1,7 +1,7 @@
 #include <iostream>
 #include "quicksort.h"
 #include "sort_small_arrays.h"
-
+#include "semaphore.h"
 template< typename T>
 unsigned partition(T* a, unsigned begin, unsigned end) {
 	unsigned i = begin, last = end - 1;
@@ -146,16 +146,24 @@ void quicksort_iterative_aux(Container<T> & ranges)
 
 //Thread sorting code
 template <typename T>
-void threadQuicksort(Container<T>& container, const std::mutex& m, unsigned startRange, unsigned endRange, int myThreadID)
+void threadQuicksort(Container<T>& container, const std::mutex& m, const Semaphore& s, unsigned startRange, unsigned endRange, int myThreadID,  int& counter)
 {
 	triple<T> r;
 	while (true)  //Check for end of calculation / empty container goes here <-----
+				//Use a counter for the number of sorted elements--after each partition, increment it by 1, when it's equal to the size of the range, you're done
 	{
+
+		if(counter==endRange-startRange)
+		{
+			break;
+		}
+
+		s.wait();
 		m.lock();
 		r = container.top();
 		container.pop();
 		m.unlock();
-
+		
 		T* a = r.first;
 		unsigned b = r.second.first;
 		unsigned e = r.second.second;
@@ -173,12 +181,30 @@ void threadQuicksort(Container<T>& container, const std::mutex& m, unsigned star
 
 
 			unsigned q = partition(a, b, e);
+			++counter;  //Maybe guard this with a mutex?
+
+			if (b - a > 1)
+			{
+				m.lock();
+				ranges.PUSH(std::make_pair(a, std::make_pair(b, q)));
+				m.unlock();
+
+			}
+
+			if ((q + 1) - 1 > 1)
+			{
+				m.lock();
+				ranges.PUSH(std::make_pair(a, std::make_pair(q + 1, e)));
+				m.unlock();
+			}
+				
+			//	m.lock();
+			//ranges.PUSH(std::make_pair(a, std::make_pair(b, q)));
+			//ranges.PUSH(std::make_pair(a, std::make_pair(q + 1, e)));
+			//m.unlock();
 
 
-			m.lock();
-			ranges.PUSH(std::make_pair(a, std::make_pair(b, q)));
-			ranges.PUSH(std::make_pair(a, std::make_pair(q + 1, e)));
-			m.unlock();
+			s.signal();
 		}
 	}
 }
@@ -192,9 +218,11 @@ void quicksort(T* a, unsigned startRange, unsigned endRange, int numThreads)
 	ranges.push(std::make_pair(a), std::make_pair(startRange, endRange));
 	std::thread t[numThreads];
 	std::mutex emptyContainerMutex;
+	Semaphore s(1);
+	
 		for(int i=0;i<numThreads;++i)
 		{ 
-			t[i] = std::thread(threadQuicksort, ranges, emptyContainerMutex, startRange, endRange, i);
+			t[i] = std::thread(threadQuicksort, ranges, emptyContainerMutex, s, startRange, endRange, i,0);
 		}
 
 		//Run ittttt

@@ -81,6 +81,7 @@
     <ClCompile Include="quicksort-skeleton.cpp" />
     <ClCompile Include="quicksort.cpp" />
     <ClCompile Include="ratio.cpp" />
+    <ClCompile Include="semaphore.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Makefile" />
@@ -98,6 +99,7 @@
     <ClInclude Include="quicksort-skeleton.h" />
     <ClInclude Include="quicksort.h" />
     <ClInclude Include="ratio.h" />
+    <ClInclude Include="semaphore.h" />
     <ClInclude Include="sort_small_arrays.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
