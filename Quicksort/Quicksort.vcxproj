@@ -78,7 +78,6 @@
   <ItemGroup>
     <ClCompile Include="driver-debugging.cpp" />
     <ClCompile Include="driver.cpp" />
-    <ClCompile Include="quicksort-skeleton.cpp" />
     <ClCompile Include="quicksort.cpp" />
     <ClCompile Include="ratio.cpp" />
     <ClCompile Include="semaphore.cpp" />
@@ -96,7 +95,6 @@
     <None Include="..\out7" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="quicksort-skeleton.h" />
     <ClInclude Include="quicksort.h" />
     <ClInclude Include="ratio.h" />
     <ClInclude Include="semaphore.h" />

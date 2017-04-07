@@ -1,7 +1,63 @@
 #include <iostream>
-#include "quicksort.h"
+#include <thread>
+#include <mutex>
+#include <atomic>
+//#include "quicksort.h"
 #include "sort_small_arrays.h"
-#include "semaphore.h"
+//#include "semaphore.h"
+#include <condition_variable>
+class Semaphore
+{
+public:
+
+
+
+	Semaphore(int m) : numThreadsInside(m), cv(), mutex() {}
+
+	int getNumThreadsInside() const { return numThreadsInside; }
+
+
+	void wait();
+	void signal();
+private:
+
+
+	int numThreadsInside;
+	std::condition_variable cv;
+	std::mutex mutex;
+};
+
+
+void Semaphore::wait()
+{
+	std::unique_lock<std::mutex> lock(mutex);
+	while (!numThreadsInside)
+	{
+		cv.wait(lock);
+	}
+
+	--numThreadsInside;
+
+	return;
+}
+
+void Semaphore::signal()
+{
+	std::unique_lock<std::mutex> lock(mutex);
+	++numThreadsInside;
+	lock.unlock();
+	cv.notify_all();
+	return;
+}
+
+
+
+
+
+
+
+
+
 template< typename T>
 unsigned partition(T* a, unsigned begin, unsigned end) {
 	unsigned i = begin, last = end - 1;
@@ -143,10 +199,10 @@ void quicksort_iterative_aux(Container<T> & ranges)
 	}
 }
 
-
+//#include "semaphore.h"
 //Thread sorting code
 template <typename T>
-void threadQuicksort(Container<T>& container, const std::mutex& m, const Semaphore& s, unsigned startRange, unsigned endRange, int myThreadID,  int& counter)
+void threadQuicksort(Container<T>& container,  std::mutex& m,  Semaphore& s, unsigned startRange, unsigned endRange,  unsigned& counter)
 {
 	triple<T> r;
 	while (true)  //Check for end of calculation / empty container goes here <-----
@@ -183,18 +239,18 @@ void threadQuicksort(Container<T>& container, const std::mutex& m, const Semapho
 			unsigned q = partition(a, b, e);
 			++counter;  //Maybe guard this with a mutex?
 
-			if (b - a > 1)
+			if (q-b > 1)
 			{
 				m.lock();
-				ranges.PUSH(std::make_pair(a, std::make_pair(b, q)));
+				container.PUSH(std::make_pair(a, std::make_pair(b, q)));
 				m.unlock();
 
 			}
 
-			if ((q + 1) - 1 > 1)
+			if (e - (q + 1)  > 1)
 			{
 				m.lock();
-				ranges.PUSH(std::make_pair(a, std::make_pair(q + 1, e)));
+				container.PUSH(std::make_pair(a, std::make_pair(q + 1, e)));
 				m.unlock();
 			}
 				
@@ -211,18 +267,23 @@ void threadQuicksort(Container<T>& container, const std::mutex& m, const Semapho
 //END Thread sorting code
 
 template<typename T>
-void quicksort(T* a, unsigned startRange, unsigned endRange, int numThreads)
+void quicksort(T* a, unsigned startRange, unsigned endRange, const int numThreads)
 {
 
 	Container<T> ranges;
-	ranges.push(std::make_pair(a), std::make_pair(startRange, endRange));
+	ranges.push(std::make_pair(a, std::make_pair(startRange, endRange)));
 	std::thread t[numThreads];
+	//std::vector<std::thread> t(numThreads);
 	std::mutex emptyContainerMutex;
+	unsigned blah = 0;
 	Semaphore s(1);
 	
 		for(int i=0;i<numThreads;++i)
 		{ 
-			t[i] = std::thread(threadQuicksort, ranges, emptyContainerMutex, s, startRange, endRange, i,0);
+			//threads.push_back( std::thread(threadQuicksort<T>, std::ref(ranges), std::ref(emptyContainerMutex), std::ref(s), startRange, endRange, &blah));
+			t[i] = (std::thread([&]() { threadQuicksort(ranges, emptyContainerMutex,s,startRange,endRange,blah); }));
+
+		
 		}
 
 		//Run ittttt

@@ -7,7 +7,7 @@ template< typename T>
 void quicksort_iterative(T* a, unsigned begin, unsigned end);
 
 template< typename T>
-void quicksort(T* a, unsigned, unsigned, int);  //Container pointer, start range, end range, num threads?
+void quicksort(T* a, unsigned x, unsigned b, int c);  //Container pointer, start range, end range, num threads?
 
 #include "quicksort.cpp"
 #endif
